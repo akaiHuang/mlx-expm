@@ -84,6 +84,19 @@ python benchmark.py
 python benchmark.py --sizes 32 64 128 256 512 --complex
 ```
 
+Measured on Apple M1 Max (MLX 0.31.1, Python 3.11) vs `scipy.linalg.expm`:
+
+| n    | real speedup | complex speedup |
+|-----:|-------------:|----------------:|
+|   32 |        0.03x |           0.01x |
+|  128 |        0.15x |           0.26x |
+|  256 |        0.53x |       **1.96x** |
+|  512 |        0.54x |           1.33x |
+| 1024 |    **2.08x** |               - |
+| 2048 |        1.87x |               - |
+
+Crossover is around `n=1024` real / `n=256` complex; below that, SciPy's CPU LAPACK wins on dispatch overhead. Max abs error stays at the float32 noise floor (`~1e-6 * n`). See [`benchmark_results.md`](benchmark_results.md) for full numbers and discussion.
+
 ## Tests
 
 ```bash
